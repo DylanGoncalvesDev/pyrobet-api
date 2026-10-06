@@ -15,8 +15,15 @@ class AuthTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        
+        $this->artisan('passport:keys');
 
-        $this->artisan('passport:install');
+        $this->artisan('passport:client', [
+            '--personal' => true,
+            '--name' => 'Personal Access Client',
+            '--provider' => 'users',
+            '--no-interaction' => true,
+        ]);
     }
 
     public function test_user_can_register(): void
@@ -25,8 +32,7 @@ class AuthTest extends TestCase
             'name' => 'Dylan Dev',
             'email' => 'dylan@pyrobet.com',
             'password' => 'secret123',
-            'password_confirmation' => 'secret123',
-            'role' => 'user' 
+            'password_confirmation' => 'secret123', 
         ]);
 
         $response->assertStatus(201);
