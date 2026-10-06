@@ -43,4 +43,26 @@ class AuthTest extends TestCase
             'user' => ['id','name','email','role']
         ]);
     }
+
+    public function test_user_can_login(): void
+    {
+      $user = User::factory()->create([
+         'name' => 'Dylan Dev',
+         'email' => 'dylan@pyrobet.com',
+         'password' => \Illuminate\Support\Facades\Hash::make('secret123'),
+      ]);
+
+      $response = $this->postJson('/api/login', [
+            'email' => 'dylan@pyrobet.com',
+            'password' => 'secret123',
+      ]);
+
+      $response->assertStatus(200);
+
+      $response->assertJsonStructure([
+            'message',
+            'token',
+            'user' => ['id','name','email','role']
+        ]);
+    }
 }
