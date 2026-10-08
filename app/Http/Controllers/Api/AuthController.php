@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
@@ -33,7 +34,7 @@ class AuthController extends Controller
        $token = $user->createToken('PersonalAccessToken')->accessToken;
 
        return response()->json([
-         'message' => 'Usuario registrado con éxito',
+         'message' => 'Authorized: successful registration',
          'user' => [
            'id' => $user->id,
            'name' => $user->name,
@@ -42,5 +43,35 @@ class AuthController extends Controller
          ],
          'token' => $token
        ], 201);
+    }
+
+    public function login(Request $request): JsonResponse
+    {
+       $validatedData = $request->validate([
+         'email' => 'required|string|email|max:255',
+         'password' => 'required|string|min:8',
+       ]);
+
+       if(!Auth::attempt($validatedData))
+       {
+         return response()->json([
+            'message' => 'Unauthorized: Invalid Credentials',
+         ], 401);
+       } 
+
+       $user = Auth::user();
+
+       $token = $user->createToken('PyroBetToken')->accessToken;
+
+       return response()->json([
+          'message' => 'Authorized: successful login',
+          'user' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
+          ],
+          'token' => $token
+       ], 200);
     }
 }
