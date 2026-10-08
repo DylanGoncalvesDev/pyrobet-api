@@ -31,7 +31,7 @@ class AuthController extends Controller
          'password' => Hash::make($validatedData['password'])
        ]);
 
-       $token = $user->createToken('PersonalAccessToken')->accessToken;
+       $token = $user->createToken('PyroBetToken')->accessToken;
 
        return response()->json([
          'message' => 'Authorized: successful registration',
