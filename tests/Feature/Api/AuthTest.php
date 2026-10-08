@@ -63,6 +63,19 @@ class AuthTest extends TestCase
             'message',
             'token',
             'user' => ['id','name','email','role']
-        ]);
+      ]);
+    }
+
+    public function test_user_can_logout(): void
+    {
+       $user = User::factory()->create();
+
+       Passport::actingAs($user);
+
+       $response = $this->postJson('/api/logout');
+
+       $response->assertStatus(200);
+
+       $response->assertJsonStructure(['message']);
     }
 }
