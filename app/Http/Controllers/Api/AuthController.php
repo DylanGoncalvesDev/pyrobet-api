@@ -55,7 +55,7 @@ class AuthController extends Controller
        if(!Auth::attempt($validatedData))
        {
          return response()->json([
-            'message' => 'Unauthorized: Invalid Credentials',
+            'message' => 'Unauthorized: Invalid Credentials'
          ], 401);
        } 
 
@@ -73,5 +73,14 @@ class AuthController extends Controller
           ],
           'token' => $token
        ], 200);
+    }
+
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()->token()->revoke();
+
+        return response()->json([
+           'message' => 'Successfully logged out'
+        ], 200);
     }
 }
