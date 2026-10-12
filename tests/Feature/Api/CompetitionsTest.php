@@ -30,6 +30,7 @@ class CompetitionsTest extends TestCase
 
        $response->assertJsonStructure([
             'message',
+            'competition'
        ]);
     }
 }
