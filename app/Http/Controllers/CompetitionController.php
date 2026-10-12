@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Competition;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+class CompetitionController extends Controller
+{
+    //
+    public function store(Request $request): JsonResponse
+    {
+       $validatedData = $request->validate([
+           'name' => [
+             'required',
+             'string',
+             'max:255',
+             'unique:competitions',
+             'regex:/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\-\.\_]+$/'
+           ],
+           'description' => 'nullable|string|max:2000',
+           'status' => 'required|string|in:not_started,in_progress,finished',
+           'start_date'  => 'required|date|date_format:Y-m-d H:i:s',
+           'end_date'    => 'required|date|date_format:Y-m-d H:i:s|after:start_date'
+       ]);
+
+       $competition = Competition::create($validatedData);
+
+       return response()->json([
+          'message' => 'Competition successfully created',
+          'competition' => $competition
+       ], 201);
+    }
+}
