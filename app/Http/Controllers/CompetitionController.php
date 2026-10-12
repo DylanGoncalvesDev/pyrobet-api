@@ -32,4 +32,13 @@ class CompetitionController extends Controller
           'competition' => $competition
        ], 201);
     }
+
+    public function index(): JsonResponse
+    {
+       $competitions = Competition::all();
+
+       return response()->json([
+           'competitions' => $competitions
+       ]);  
+    }
 }
