@@ -40,10 +40,10 @@ class CompetitionsTest extends TestCase
       $user = User::factory()->create();
 
       $competition = Competition::create([
-          'name'       => 'Champions League',
-          'status'     => 'not_started',
+          'name' => 'Champions League',
+          'status' => 'not_started',
           'start_date' => '2026-08-25 00:00:00',
-          'end_date'   => '2027-07-15 00:00:00'
+          'end_date' => '2027-07-15 00:00:00'
       ]);
 
       Passport::actingAs($user);
@@ -55,5 +55,31 @@ class CompetitionsTest extends TestCase
       $response->assertJsonStructure([
          'competitions'
       ]);
+    }
+
+    public function test_user_can_update_competitions(): void
+    {
+       $user = User::factory()->create(['role' => 'admin']);
+
+       $competition = Competition::create([
+          'name' => 'Champions League',
+          'status' => 'not_started',
+          'start_date' => '2026-08-25 00:00:00',
+          'end_date' => '2027-07-15 00:00:00'
+       ]);
+
+       Passport::actingAs($user);
+
+       $response = $this->putJson('/api/competitions' . $competition->id, [
+           'name' => 'La Liga',
+           'status' => 'in_progress'
+       ]);
+
+       $response->assertStatus(200);
+
+       $response->assertJsonStructure([
+         'message',
+         'competition'
+       ]);
     }
 }
