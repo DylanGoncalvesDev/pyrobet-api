@@ -47,7 +47,13 @@ class CompetitionController extends Controller
        $competition = Competition::findOrFail($id);
 
        $validatedData = $request->validate([
-          'name'        => 'required|string|max:255|unique:competitions,name,' . $id,
+          'name' => [
+             'required',
+             'string',
+             'max:255',
+             'unique:competitions,name,' . $id,
+             'regex:/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\-\.\_]+$/'
+          ],
           'description' => 'nullable|string|max:1000',
           'status'      => 'required|string|in:not_started,in_progress,finished',
           'start_date'  => 'required|date|date_format:Y-m-d H:i:s',
