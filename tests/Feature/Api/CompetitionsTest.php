@@ -70,7 +70,7 @@ class CompetitionsTest extends TestCase
 
        Passport::actingAs($user);
 
-       $response = $this->putJson('/api/competitions' . $competition->id, [
+       $response = $this->putJson('/api/competitions/' . $competition->id, [
            'name' => 'La Liga',
            'status' => 'in_progress'
        ]);
@@ -80,6 +80,28 @@ class CompetitionsTest extends TestCase
        $response->assertJsonStructure([
          'message',
          'competition'
+       ]);
+    }
+
+    public function test_user_can_delete_competitions(): void
+    {
+       $user = User::factory()->create(['role' => 'admin']);
+
+       $competition = Competition::create([
+          'name' => 'Champions League',
+          'status' => 'not_started',
+          'start_date' => '2026-08-25 00:00:00',
+          'end_date' => '2027-07-15 00:00:00'
+       ]);
+
+       Passport::actingAs($user);
+
+       $response = $this->deleteJson('/api/competitions/' . $competition->id);
+
+       $response->assertStatus(200);
+
+       $response->assertJsonStructure([
+         'message',
        ]);
     }
 }
