@@ -41,4 +41,24 @@ class CompetitionController extends Controller
            'competitions' => $competitions
        ]);  
     }
+
+    public function update(Request $request , $id): JsonResponse
+    {
+       $competition = Competition::findOrFail($id);
+
+       $validatedData = $request->validate([
+          'name'        => 'required|string|max:255|unique:competitions,name,' . $id,
+          'description' => 'nullable|string|max:1000',
+          'status'      => 'required|string|in:not_started,in_progress,finished',
+          'start_date'  => 'required|date|date_format:Y-m-d H:i:s',
+          'end_date'    => 'required|date|date_format:Y-m-d H:i:s|after:start_date'
+       ]);
+
+       $competition->update($validatedData);
+
+       return response()->json([
+            'message'     => 'Competition updated successfully',
+            'competition' => $competition
+        ], 200);
+    }
 }

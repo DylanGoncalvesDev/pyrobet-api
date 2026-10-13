@@ -18,6 +18,6 @@ Route::middleware('auth:api')->group(function () {
 Route::middleware(['auth:api', 'admin'])->group(function () {
 
    Route::post('/competitions', [CompetitionController::class, 'store']);
-   
+   Route::put('/competitions/{id}', [CompetitionController::class, 'update']);
    
 });
