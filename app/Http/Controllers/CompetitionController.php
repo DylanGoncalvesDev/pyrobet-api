@@ -42,7 +42,7 @@ class CompetitionController extends Controller
        ]);  
     }
 
-    public function update(Request $request , $id): JsonResponse
+    public function update(Request $request , string $id): JsonResponse
     {
        $competition = Competition::findOrFail($id);
 
@@ -66,5 +66,16 @@ class CompetitionController extends Controller
             'message'     => 'Competition updated successfully',
             'competition' => $competition
         ], 200);
+    }
+
+    public function destroy(Request $request, string $id): JsonResponse
+    {
+       $competition = Competition::findOrFail($id);
+
+       $competition->delete();
+
+       return response()->json([
+          'message' => 'Competition deleted successfully',
+       ]);
     }
 }
