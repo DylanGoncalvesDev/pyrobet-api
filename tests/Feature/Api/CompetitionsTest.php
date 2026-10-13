@@ -72,7 +72,9 @@ class CompetitionsTest extends TestCase
 
        $response = $this->putJson('/api/competitions/' . $competition->id, [
            'name' => 'La Liga',
-           'status' => 'in_progress'
+           'status' => 'in_progress',
+           'start_date' => '2026-08-25 00:00:00',
+           'end_date'   => '2027-07-15 00:00:00'
        ]);
 
        $response->assertStatus(200);
