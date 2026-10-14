@@ -102,10 +102,40 @@ class PredictionsTest extends TestCase
         $response = $this->getJson('/api/predictions');
 
         $response->assertStatus(200);
-        
+
         $response->assertJsonStructure([
             'message',
             'predictions'
+        ]);
+    }
+
+    public function test_user_can_update_predictions(): void
+    {
+        $user = User::factory()->create(['role' => 'user']);
+        
+        $prediction = Prediction::create([
+            'user_id' => $user->id,
+            'match_id' => $this->match->id,
+            'status' => 'pending',
+            'prediction' => 'home',
+            'home_score_prediction' => 2,
+            'away_score_prediction' => 0,
+            'points' => 0
+        ]);
+
+        Passport::actingAs($user);
+
+        $response = $this->putJson('/api/predictions/' . $prediction->id, [
+            'prediction' => 'draw',
+            'home_score_prediction' => 1,
+            'away_score_prediction' => 1
+        ]);
+
+        $response->assertStatus(200);
+
+        $response->assertJsonStructure([
+            'message',
+            'prediction' => ['id', 'prediction', 'home_score_prediction', 'away_score_prediction']
         ]);
     }
 }
