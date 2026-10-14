@@ -99,4 +99,42 @@ class SportMatchTest extends TestCase
             'matches'
         ]);
     }
+
+     public function test_user_can_update_matches(): void
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+
+        $match = SportMatch::create([
+            'competition_id' => $this->competition->id,
+            'home_team_id'    => $this->teamHome->id,
+            'away_team_id'    => $this->teamAway->id,
+            'date'            => '2026-10-24 21:00:00',
+            'location'        => 'Santiago Bernabéu',
+            'stage'           => 'Jornada 11',
+            'status'          => 'upcoming',
+            'sport'           => 'soccer football'
+        ]);
+
+        Passport::actingAs($user);
+
+        $response = $this->putJson('/api/matches/' . $match->id, [
+            'competition_id'  => $this->competition->id,
+            'home_team_id'    => $this->teamHome->id,
+            'away_team_id'    => $this->teamAway->id,
+            'date'            => '2026-10-24 21:00:00',
+            'location'        => 'Santiago Bernabéu',
+            'stage'           => 'Jornada 11',
+            'status'          => 'live',
+            'home_team_score' => 2,
+            'away_team_score' => 1,
+            'sport'           => 'soccer football'
+        ]);
+
+        $response->assertStatus(200);
+        
+        $response->assertJsonStructure([
+            'message',
+            'match' => ['id', 'status', 'home_team_score', 'away_team_score']
+        ]);
+    }
 }
