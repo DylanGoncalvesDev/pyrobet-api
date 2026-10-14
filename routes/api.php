@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\PredictionsController;
+use App\Http\Controllers\RankingController;
 use App\Http\Controllers\SportMatchController;
 use App\Http\Controllers\TeamsController;
 
@@ -21,6 +22,7 @@ Route::middleware('auth:api')->group(function () {
   Route::get('/predictions', [PredictionsController::class, 'index']);
   Route::put('/predictions/{id}', [PredictionsController::class, 'update']);
   Route::delete('/predictions/{id}', [PredictionsController::class, 'destroy']);
+  Route::get('/ranking', [RankingController::class, 'index']);
 
 });
 
