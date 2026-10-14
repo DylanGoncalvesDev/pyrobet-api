@@ -12,8 +12,8 @@ class PredictionsController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validatedData = $request->validate([
-            'match_id'              => 'required|exists:matches,id',
-            'prediction'            => 'required|string|in:home,draw,away',
+            'match_id' => 'required|exists:matches,id',
+            'prediction' => 'required|string|in:home,draw,away',
             'home_score_prediction' => 'required|integer|min:0',
             'away_score_prediction' => 'required|integer|min:0',
         ]);
@@ -45,7 +45,7 @@ class PredictionsController extends Controller
         $prediction = Prediction::where('user_id', $request->user()->id)->findOrFail($id);
 
         $validatedData = $request->validate([
-            'prediction'            => 'required|string|in:home,draw,away',
+            'prediction' => 'required|string|in:home,draw,away',
             'home_score_prediction' => 'required|integer|min:0',
             'away_score_prediction' => 'required|integer|min:0',
         ]);
@@ -55,6 +55,17 @@ class PredictionsController extends Controller
         return response()->json([
             'message' => 'Prediction updated successfully',
             'prediction' => $prediction
+        ], 200);
+    }
+
+    public function destroy(string $id): JsonResponse
+    {
+        $prediction = Prediction::findOrFail($id);
+
+        $prediction->delete();
+
+        return response()->json([
+            'message' => 'Prediction deleted successfully'
         ], 200);
     }
 }

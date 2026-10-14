@@ -17,7 +17,8 @@ Route::middleware('auth:api')->group(function () {
   Route::get('/teams', [TeamsController::class, 'index']);
   Route::post('/predictions', [PredictionsController::class, 'store']);
   Route::post('/predictions', [PredictionsController::class, 'index']);
-  Route::put('/predictions{id}', [PredictionsController::class, 'update']);
+  Route::put('/predictions/{id}', [PredictionsController::class, 'update']);
+  Route::delete('/predictions/{id}', [PredictionsController::class, 'destroy']);
 
 });
 
