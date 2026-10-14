@@ -19,7 +19,7 @@ class TeamsTest extends TestCase
         $user = User::factory()->create();
 
         $team = Team::create([
-            'nombre' => 'barcelona',
+            'name' => 'barcelona',
             'logo' => 'logos/real_madrid.png',
             'country' => 'España',
             'founded_at' => '1999',
