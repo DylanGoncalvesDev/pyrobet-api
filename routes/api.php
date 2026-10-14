@@ -5,10 +5,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\CompetitionController;
 use App\Http\Controllers\PredictionsController;
+use App\Http\Controllers\SportMatchController;
 use App\Http\Controllers\TeamsController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/matches', [SportMatchController::class, 'index']);
 
 Route::middleware('auth:api')->group(function () {
 
@@ -16,7 +18,7 @@ Route::middleware('auth:api')->group(function () {
   Route::get('/competitions', [CompetitionController::class, 'index']);
   Route::get('/teams', [TeamsController::class, 'index']);
   Route::post('/predictions', [PredictionsController::class, 'store']);
-  Route::post('/predictions', [PredictionsController::class, 'index']);
+  Route::get('/predictions', [PredictionsController::class, 'index']);
   Route::put('/predictions/{id}', [PredictionsController::class, 'update']);
   Route::delete('/predictions/{id}', [PredictionsController::class, 'destroy']);
 
@@ -30,4 +32,7 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
    Route::post('/teams', [TeamsController::class, 'store']);
    Route::put('/teams/{id}', [TeamsController::class, 'update']);
    Route::delete('/teams/{id}', [TeamsController::class, 'destroy']);
+   Route::post('/matches', [SportMatchController::class, 'store']);
+   Route::put('/matches/{id}', [SportMatchController::class, 'update']);
+   Route::delete('/matches/{id}', [SportMatchController::class, 'destroy']);
 });
