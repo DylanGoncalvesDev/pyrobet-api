@@ -32,4 +32,13 @@ class SportMatchController extends Controller
             'match' => $match
         ], 201);
     }
+
+    public function index(): JsonResponse
+    {
+        $matches = SportMatch::with(['competition', 'homeTeam', 'awayTeam'])->get();
+
+        return response()->json([
+            'matches' => $matches
+        ], 200);
+    }
 }
