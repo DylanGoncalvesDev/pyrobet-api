@@ -69,17 +69,43 @@ class PredictionsTest extends TestCase
         Passport::actingAs($user);
 
         $response = $this->postJson('/api/predictions', [
-            'match_id'              => $this->match->id,
-            'prediction'            => 'home',
+            'match_id' => $this->match->id,
+            'prediction' => 'home',
             'home_score_prediction' => 3,
             'away_score_prediction' => 1
         ]);
 
         $response->assertStatus(201);
-        
+
         $response->assertJsonStructure([
             'message',
             'prediction' => ['id', 'user_id', 'match_id', 'prediction', 'home_score_prediction', 'status']
+        ]);
+    }
+
+    public function test_user_can_list_predictions(): void
+    {
+        $user = User::factory()->create(['role' => 'user']);
+        
+        Prediction::create([
+            'user_id' => $user->id,
+            'match_id' => $this->match->id,
+            'status' => 'pending',
+            'prediction' => 'home',
+            'home_score_prediction' => 2,
+            'away_score_prediction' => 0,
+            'points' => 0
+        ]);
+
+        Passport::actingAs($user);
+
+        $response = $this->getJson('/api/predictions');
+
+        $response->assertStatus(200);
+        
+        $response->assertJsonStructure([
+            'message',
+            'predictions'
         ]);
     }
 }
