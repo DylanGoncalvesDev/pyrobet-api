@@ -69,4 +69,17 @@ class TeamsController extends Controller
            'team' => $team
         ]);  
     }
+
+    public function destroy(string $id): JsonResponse
+    {
+        $team = Team::findOrFail($id);
+
+        $team->delete();
+
+        return response()->json([
+           'message' => 'Team deleted successfully',
+        ]);  
+    }
+
+
 }
