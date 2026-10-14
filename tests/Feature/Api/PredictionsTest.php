@@ -64,7 +64,7 @@ class PredictionsTest extends TestCase
 
     public function test_user_can_create_predictions(): void
     {
-        $user = User::factory()->create(['role' => 'user']);
+        $user = User::factory()->create();
 
         Passport::actingAs($user);
 
@@ -85,7 +85,7 @@ class PredictionsTest extends TestCase
 
     public function test_user_can_list_predictions(): void
     {
-        $user = User::factory()->create(['role' => 'user']);
+        $user = User::factory()->create();
         
         Prediction::create([
             'user_id' => $user->id,
@@ -111,7 +111,7 @@ class PredictionsTest extends TestCase
 
     public function test_user_can_update_predictions(): void
     {
-        $user = User::factory()->create(['role' => 'user']);
+        $user = User::factory()->create();
         
         $prediction = Prediction::create([
             'user_id' => $user->id,
@@ -141,7 +141,7 @@ class PredictionsTest extends TestCase
 
     public function test_user_can_delete_predictions(): void
     {
-        $user = User::factory()->create(['role' => 'user']);
+        $user = User::factory()->create();
         
         $prediction = Prediction::create([
             'user_id' => $user->id,
