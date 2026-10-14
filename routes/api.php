@@ -23,5 +23,5 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
    Route::put('/competitions/{id}', [CompetitionController::class, 'update']);
    Route::delete('/competitions/{id}', [CompetitionController::class, 'destroy']);
    Route::post('/teams', [TeamsController::class, 'store']);
-   
+   Route::put('/teams/{id}', [TeamsController::class, 'update']);
 });

@@ -42,4 +42,31 @@ class TeamsController extends Controller
            'teams' => $teams
         ]);  
     }
+
+    public function update(Request $request, string $id ): JsonResponse
+    {
+        $team = Team::findOrFail($id);
+
+        $validatedData = $request->validate([
+            'name' => [
+             'required',
+             'string',
+             'max:255',
+             'unique:teams,name,' . $id,
+             'regex:/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\-\.\_]+$/'
+            ],
+            'logo'  => 'nullable|string|max:255',
+            'country'  => 'required|string|max:100',
+            'founded_at'  => 'required|integer|min:1800|max:' . date('Y'),
+            'type'  => 'required|in:national,club',
+            'sport' => 'required|in:american football,soccer football,rugby,basketball,baseball,cricket,softball,volleyball,hockey,handball,futsal'
+        ]);
+
+        $team->update($validatedData);
+
+        return response()->json([
+           'message' => 'Team updated successfully',
+           'team' => $team
+        ]);  
+    }
 }
