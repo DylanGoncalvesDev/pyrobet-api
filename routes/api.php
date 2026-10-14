@@ -16,6 +16,7 @@ Route::middleware('auth:api')->group(function () {
   Route::get('/competitions', [CompetitionController::class, 'index']);
   Route::get('/teams', [TeamsController::class, 'index']);
   Route::post('/predictions', [PredictionsController::class, 'store']);
+  Route::post('/predictions', [PredictionsController::class, 'index']);
 
 });
 

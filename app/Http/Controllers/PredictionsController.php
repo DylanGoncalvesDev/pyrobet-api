@@ -29,4 +29,14 @@ class PredictionsController extends Controller
             'prediction' => $prediction
         ], 201);
     }
+
+    public function index(Request $request): JsonResponse
+    {
+        $predictions = Prediction::where('user_id', $request->user()->id)->with('match')->get();
+
+        return response()->json([
+            'message' => 'Predictions retrieved successfully',
+            'predictions' => $predictions
+        ], 200);
+    }
 }
