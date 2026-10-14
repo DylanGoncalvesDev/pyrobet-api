@@ -68,7 +68,7 @@ class CompetitionController extends Controller
         ], 200);
     }
 
-    public function destroy(Request $request, string $id): JsonResponse
+    public function destroy(string $id): JsonResponse
     {
        $competition = Competition::findOrFail($id);
 
