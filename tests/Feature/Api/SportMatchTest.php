@@ -74,5 +74,29 @@ class SportMatchTest extends TestCase
         ]);
     }
 
-    
+    public function test_user_can_list_matches(): void
+    {
+        $user = User::factory()->create();
+
+        SportMatch::create([
+            'competition_id' => $this->competition->id,
+            'home_team_id'    => $this->teamHome->id,
+            'away_team_id'    => $this->teamAway->id,
+            'date'            => '2026-10-24 21:00:00',
+            'location'        => 'Santiago Bernabéu',
+            'stage'           => 'Jornada 11',
+            'status'          => 'upcoming',
+            'sport'           => 'soccer football'
+        ]);
+
+        Passport::actingAs($user);
+
+        $response = $this->getJson('/api/matches');
+
+        $response->assertStatus(200);
+
+        $response->assertJsonStructure([
+            'matches'
+        ]);
+    }
 }
