@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\CompetitionController;
+use App\Http\Controllers\PredictionsController;
 use App\Http\Controllers\SportMatchController;
 use App\Http\Controllers\TeamsController;
 
@@ -16,6 +17,10 @@ Route::middleware('auth:api')->group(function () {
   Route::post('/logout', [AuthController::class, 'logout']);
   Route::get('/competitions', [CompetitionController::class, 'index']);
   Route::get('/teams', [TeamsController::class, 'index']);
+  Route::post('/predictions', [PredictionsController::class, 'store']);
+  Route::get('/predictions', [PredictionsController::class, 'index']);
+  Route::put('/predictions/{id}', [PredictionsController::class, 'update']);
+  Route::delete('/predictions/{id}', [PredictionsController::class, 'destroy']);
 
 });
 
