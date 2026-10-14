@@ -66,4 +66,15 @@ class SportMatchController extends Controller
             'match' => $match
         ], 200);
     }
+
+    public function destroy(string $id): JsonResponse
+    {
+        $match = SportMatch::findOrFail($id);
+        
+        $match->delete();
+
+        return response()->json([
+            'message' => 'Match deleted successfully'
+        ], 200);
+    }
 }
