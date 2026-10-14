@@ -14,6 +14,29 @@ class TeamsTest extends TestCase
     /**
      * A basic feature test example.
      */
+    public function test_user_can_create_teams(): void
+    {
+       $user = User::factory()->create(['role' => 'admin']);
+
+       Passport::actingAs($user);
+
+       $response = $this->postJson('/api/teams', [
+            'name' => 'barcelona',
+            'logo' => 'logos/real_madrid.png',
+            'country' => 'España',
+            'founded_at' => '1999',
+            'type' => 'club',
+            'sport'  => 'soccer football'
+       ]);
+
+       $response->assertStatus(201);
+
+       $response->assertJsonStructure([
+         'message',
+         'team'
+       ]);
+    }
+
     public function test_user_can_list_teams(): void
     {
         $user = User::factory()->create();
@@ -37,4 +60,5 @@ class TeamsTest extends TestCase
          'teams'
         ]);
     }
+
 }
