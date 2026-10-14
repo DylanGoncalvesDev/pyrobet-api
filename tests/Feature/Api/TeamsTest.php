@@ -93,4 +93,27 @@ class TeamsTest extends TestCase
        ]);
     }
 
+    public function test_user_can_delete_teams(): void
+    {
+      $user = User::factory()->create(['role' => 'admin']);
+
+      $team = Team::create([
+            'name' => 'barcelona',
+            'logo' => 'logos/real_madrid.png',
+            'country' => 'España',
+            'founded_at' => '1999',
+            'type' => 'club',
+            'sport'  => 'soccer football'
+      ]);
+       
+      Passport::actingAs($user);
+
+      $response = $this->deleteJson('/api/teams/' . $team->id);
+
+      $response->assertStatus(200);
+
+      $response->assertJsonStructure([
+         'message',
+      ]);
+    }
 }
