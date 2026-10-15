@@ -61,6 +61,49 @@ class SportMatchController extends Controller
 
         $match->update($validated);
 
+          if ($match->status === 'finished') {
+              $realResult = 'draw';
+
+            if ($match->home_team_score > $match->away_team_score) {
+                $realResult = 'home';
+            } elseif ($match->home_team_score < $match->away_team_score) {
+                      $realResult = 'away';
+            }
+
+            $predictions = $match->predictions;
+
+            foreach ($predictions as $prediction) {
+                $earnedPoints = 0;
+                $status = 'incorrect';
+
+                $hitWinner = ($prediction->prediction === $realResult);
+                $hitHomeScore = ($prediction->home_score_prediction == $match->home_team_score);
+                $hitAwayScore = ($prediction->away_score_prediction == $match->away_team_score);
+
+                if ($hitWinner && $hitHomeScore && $hitAwayScore) {
+                    $earnedPoints = 8;
+                    $status = 'correct';
+                } elseif ($hitHomeScore && $hitAwayScore) {
+                    $earnedPoints = 6;
+                    $status = 'correct';
+                } elseif ($hitWinner && ($hitHomeScore || $hitAwayScore)) {
+                    $earnedPoints = 4;
+                    $status = 'correct';
+                } elseif ($hitHomeScore || $hitAwayScore) {
+                    $earnedPoints = 2;
+                    $status = 'correct';
+                } elseif ($hitWinner) {
+                    $earnedPoints = 1;
+                    $status = 'correct';
+                }
+
+                $prediction->update([
+                    'points' => $earnedPoints,
+                    'status' => $status,
+                ]);
+            }
+          }
+          
         return response()->json([
             'message' => 'Match updated successfully',
             'match' => $match
@@ -70,7 +113,7 @@ class SportMatchController extends Controller
     public function destroy(string $id): JsonResponse
     {
         $match = SportMatch::findOrFail($id);
-        
+
         $match->delete();
 
         return response()->json([
