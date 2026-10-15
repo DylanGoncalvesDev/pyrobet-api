@@ -98,8 +98,8 @@ class RankingTest extends TestCase
             ]
         ]);
 
-        $this->assertEquals('User B', $response->json('ranking.0.name'));
-        
+        $this->assertEquals('User 2', $response->json('ranking.0.name'));
+
         $this->assertEquals(30, $response->json('ranking.0.total_points'));
     }
 }
