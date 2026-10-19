@@ -5,11 +5,34 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\SportMatch;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Attributes as OA;
 
 
 class SportMatchController extends Controller
 {
-    //
+    #[OA\Post(
+        path: "/api/matches",
+        tags: ["Partidos"],
+        summary: "Registrar un nuevo partido (Solo Administradores)",
+        security: [["bearerAuth" => []]]
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ["competition_id", "home_team_id", "away_team_id", "date", "location", "stage", "status", "sport"],
+            properties: [
+                new OA\Property(property: "competition_id", type: "integer", example: 1),
+                new OA\Property(property: "home_team_id", type: "integer", example: 1),
+                new OA\Property(property: "away_team_id", type: "integer", example: 2),
+                new OA\Property(property: "date", type: "string", example: "2026-10-24 21:00:00"),
+                new OA\Property(property: "location", type: "string", example: "Santiago Bernabéu"),
+                new OA\Property(property: "stage", type: "string", example: "Jornada 11"),
+                new OA\Property(property: "status", type: "string", enum: ["upcoming", "live", "finished"], example: "upcoming"),
+                new OA\Property(property: "sport", type: "string", example: "soccer football")
+            ]
+        )
+    )]
+    #[OA\Response(response: 201, description: "Partido creado correctamente")]
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -32,7 +55,13 @@ class SportMatchController extends Controller
             'match' => $match
         ], 201);
     }
-
+    
+     #[OA\Get(
+        path: "/api/matches",
+        tags: ["Partidos"],
+        summary: "Consultar listado general de partidos con relaciones"
+    )]
+    #[OA\Response(response: 200, description: "Colección hidratada de encuentros")]
     public function index(): JsonResponse
     {
         $matches = SportMatch::with(['competition', 'homeTeam', 'awayTeam'])->get();
@@ -41,7 +70,33 @@ class SportMatchController extends Controller
             'matches' => $matches
         ], 200);
     }
-
+    
+     #[OA\Put(
+        path: "/api/matches/{id}",
+        tags: ["Partidos"],
+        summary: "Actualizar un partido y disparar el cálculo de puntos (Solo Administradores)",
+        security: [["bearerAuth" => []]],
+        parameters: [new OA\Parameter(name: "id", in: "path", required: true, schema: new OA\Schema(type: "string"))]
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ["competition_id", "home_team_id", "away_team_id", "date", "location", "stage", "status", "sport"],
+            properties: [
+                new OA\Property(property: "competition_id", type: "integer", example: 1),
+                new OA\Property(property: "home_team_id", type: "integer", example: 1),
+                new OA\Property(property: "away_team_id", type: "integer", example: 2),
+                new OA\Property(property: "date", type: "string", example: "2026-10-24 21:00:00"),
+                new OA\Property(property: "location", type: "string", example: "Santiago Bernabéu"),
+                new OA\Property(property: "stage", type: "string", example: "Jornada 11"),
+                new OA\Property(property: "status", type: "string", example: "finished"),
+                new OA\Property(property: "home_team_score", type: "integer", example: 2),
+                new OA\Property(property: "away_team_score", type: "integer", example: 1),
+                new OA\Property(property: "sport", type: "string", example: "soccer football")
+            ]
+        )
+    )]
+    #[OA\Response(response: 200, description: "Partido actualizado y predicciones calificadas")]
     public function update(Request $request, string $id): JsonResponse
     {
         $match = SportMatch::findOrFail($id);
@@ -109,7 +164,15 @@ class SportMatchController extends Controller
             'match' => $match
         ], 200);
     }
-
+    
+    #[OA\Delete(
+        path: "/api/matches/{id}",
+        tags: ["Partidos"],
+        summary: "Eliminar un partido de la base de datos (Solo Administradores)",
+        security: [["bearerAuth" => []]],
+        parameters: [new OA\Parameter(name: "id", in: "path", required: true, schema: new OA\Schema(type: "string"))]
+    )]
+    #[OA\Response(response: 200, description: "Partido purgado con éxito")]
     public function destroy(string $id): JsonResponse
     {
         $match = SportMatch::findOrFail($id);
