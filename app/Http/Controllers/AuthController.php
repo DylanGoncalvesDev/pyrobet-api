@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -8,10 +8,29 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
 class AuthController extends Controller
 {
-    //
+      #[OA\Post(
+        path: "/api/register",
+        tags: ["Autenticación"],
+        summary: "Registrar un nuevo usuario competidor"
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ["name", "email", "password", "password_confirmation"],
+            properties: [
+                new OA\Property(property: "name", type: "string", example: "Dylan Bet"),
+                new OA\Property(property: "email", type: "string", format: "email", example: "dylan@example.com"),
+                new OA\Property(property: "password", type: "string", format: "password", example: "password123"),
+                new OA\Property(property: "password_confirmation", type: "string", format: "password", example: "password123")
+            ]
+        )
+    )]
+    #[OA\Response(response: 201, description: "Usuario registrado con éxito")]
+    #[OA\Response(response: 422, description: "Formato inválido o correo duplicado")]
     public function register(Request $request): JsonResponse 
     {
        $validatedData = $request->validate([
@@ -45,6 +64,23 @@ class AuthController extends Controller
        ], 201);
     }
 
+    #[OA\Post(
+        path: "/api/login",
+        tags: ["Autenticación"],
+        summary: "Iniciar sesión y obtener Bearer Token"
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ["email", "password"],
+            properties: [
+                new OA\Property(property: "email", type: "string", format: "email", example: "dylan@example.com"),
+                new OA\Property(property: "password", type: "string", format: "password", example: "password123")
+            ]
+        )
+    )]
+    #[OA\Response(response: 200, description: "Login exitoso, retorna el token")]
+    #[OA\Response(response: 401, description: "Credenciales incorrectas")]
     public function login(Request $request): JsonResponse
     {
        $validatedData = $request->validate([
@@ -75,6 +111,13 @@ class AuthController extends Controller
        ], 200);
     }
 
+     #[OA\Post(
+        path: "/api/logout",
+        tags: ["Autenticación"],
+        summary: "Cerrar sesión destruyendo el token activo",
+        security: [["bearerAuth" => []]]
+    )]
+    #[OA\Response(response: 200, description: "Sesión cerrada correctamente")]
     public function logout(Request $request): JsonResponse
     {
         $request->user()->token()->revoke();

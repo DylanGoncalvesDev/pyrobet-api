@@ -11,9 +11,8 @@ use Tests\TestCase;
 
 class TeamsTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
+    use RefreshDatabase;
+    
     public function test_user_can_create_teams(): void
     {
        $user = User::factory()->create(['role' => 'admin']);
