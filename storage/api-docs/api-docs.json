@@ -1,0 +1,919 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "PyroBet API Documentation",
+        "description": "Documentación oficial e interactiva de los endpoints REST de PyroBet en Laravel 13",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api": {
+            "servers": [
+                {
+                    "url": "http://localhost:8000",
+                    "description": "Servidor Local de Desarrollo"
+                }
+            ]
+        },
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Registrar un nuevo usuario competidor",
+                "operationId": "8a56853624e025573120a09a4c75d468",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Dylan Bet"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "dylan@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usuario registrado con éxito"
+                    },
+                    "422": {
+                        "description": "Formato inválido o correo duplicado"
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Iniciar sesión y obtener Bearer Token",
+                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "dylan@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login exitoso, retorna el token"
+                    },
+                    "401": {
+                        "description": "Credenciales incorrectas"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Cerrar sesión destruyendo el token activo",
+                "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
+                "responses": {
+                    "200": {
+                        "description": "Sesión cerrada correctamente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/competitions": {
+            "get": {
+                "tags": [
+                    "Competiciones"
+                ],
+                "summary": "Listar todas las competiciones",
+                "operationId": "720319b68ba688e4af3480daa50c197e",
+                "responses": {
+                    "200": {
+                        "description": "Colección de competiciones devuelta con éxito"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Competiciones"
+                ],
+                "summary": "Crear una nueva competición (Solo Administradores)",
+                "operationId": "e79d7c89435472a40ba639358b5f54db",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "status",
+                                    "start_date",
+                                    "end_date"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Champions League"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Torneo europeo"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "not_started",
+                                        "enum": [
+                                            "not_started",
+                                            "in_progress",
+                                            "finished"
+                                        ]
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "example": "2026-08-25 00:00:00"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "example": "2027-07-15 00:00:00"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Competición creada con éxito"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/competitions/{id}": {
+            "put": {
+                "tags": [
+                    "Competiciones"
+                ],
+                "summary": "Actualizar una competición existente (Solo Administradores)",
+                "operationId": "e8c81e0a61773edb6e98e207c6b2ef65",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "status",
+                                    "start_date",
+                                    "end_date"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "La Liga EA Sports"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "in_progress",
+                                        "enum": [
+                                            "not_started",
+                                            "in_progress",
+                                            "finished"
+                                        ]
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "example": "2026-08-25 00:00:00"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "example": "2027-07-15 00:00:00"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Competición modificada correctamente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Competiciones"
+                ],
+                "summary": "Eliminar una competición (Solo Administradores)",
+                "operationId": "0dc12eaa0eef6a17595ca67e0e3e3bda",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Competición eliminada correctamente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/predictions": {
+            "get": {
+                "tags": [
+                    "Predicciones"
+                ],
+                "summary": "Listar las predicciones del usuario autenticado",
+                "operationId": "242b9ecc1102902efb6ad6fdb8764491",
+                "responses": {
+                    "200": {
+                        "description": "Colección devuelta correctamente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Predicciones"
+                ],
+                "summary": "Registrar una nueva predicción",
+                "operationId": "b89d7f214fb2675dd614c1e0b323d88a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "match_id",
+                                    "prediction",
+                                    "home_score_prediction",
+                                    "away_score_prediction"
+                                ],
+                                "properties": {
+                                    "match_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "prediction": {
+                                        "type": "string",
+                                        "example": "home",
+                                        "enum": [
+                                            "home",
+                                            "draw",
+                                            "away"
+                                        ]
+                                    },
+                                    "home_score_prediction": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "away_score_prediction": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Predicción creada con éxito"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/predictions/{id}": {
+            "put": {
+                "tags": [
+                    "Predicciones"
+                ],
+                "summary": "Modificar un pronóstico propio",
+                "operationId": "98f36b49cc0444a8af6bdd49e938a1ce",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "prediction",
+                                    "home_score_prediction",
+                                    "away_score_prediction"
+                                ],
+                                "properties": {
+                                    "prediction": {
+                                        "type": "string",
+                                        "example": "draw",
+                                        "enum": [
+                                            "home",
+                                            "draw",
+                                            "away"
+                                        ]
+                                    },
+                                    "home_score_prediction": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "away_score_prediction": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Modificación transaccional exitosa"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Predicciones"
+                ],
+                "summary": "Eliminar una predicción activa propia",
+                "operationId": "6d74fd2568e8e8254374b1f6c85030a6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Registro eliminado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/ranking": {
+            "get": {
+                "tags": [
+                    "Ranking"
+                ],
+                "summary": "Consultar la tabla de posiciones global de PyroBet",
+                "operationId": "50a7b1244dcfcb2755237827af25f6a7",
+                "responses": {
+                    "200": {
+                        "description": "Ranking calculado de mayor a menor con éxito"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/matches": {
+            "get": {
+                "tags": [
+                    "Partidos"
+                ],
+                "summary": "Consultar listado general de partidos con relaciones",
+                "operationId": "e109b475a3567ff2e76ee8573f62e1f3",
+                "responses": {
+                    "200": {
+                        "description": "Colección hidratada de encuentros"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Partidos"
+                ],
+                "summary": "Registrar un nuevo partido (Solo Administradores)",
+                "operationId": "20595541d66236ae481c2a0dd728d385",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "competition_id",
+                                    "home_team_id",
+                                    "away_team_id",
+                                    "date",
+                                    "location",
+                                    "stage",
+                                    "status",
+                                    "sport"
+                                ],
+                                "properties": {
+                                    "competition_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "home_team_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "away_team_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "example": "2026-10-24 21:00:00"
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "example": "Santiago Bernabéu"
+                                    },
+                                    "stage": {
+                                        "type": "string",
+                                        "example": "Jornada 11"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "upcoming",
+                                        "enum": [
+                                            "upcoming",
+                                            "live",
+                                            "finished"
+                                        ]
+                                    },
+                                    "sport": {
+                                        "type": "string",
+                                        "example": "soccer football"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Partido creado correctamente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/matches/{id}": {
+            "put": {
+                "tags": [
+                    "Partidos"
+                ],
+                "summary": "Actualizar un partido y disparar el cálculo de puntos (Solo Administradores)",
+                "operationId": "c57f9524f7d4d3bdd59d7feacfb771ed",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "competition_id",
+                                    "home_team_id",
+                                    "away_team_id",
+                                    "date",
+                                    "location",
+                                    "stage",
+                                    "status",
+                                    "sport"
+                                ],
+                                "properties": {
+                                    "competition_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "home_team_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "away_team_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "example": "2026-10-24 21:00:00"
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "example": "Santiago Bernabéu"
+                                    },
+                                    "stage": {
+                                        "type": "string",
+                                        "example": "Jornada 11"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "finished"
+                                    },
+                                    "home_team_score": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "away_team_score": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "sport": {
+                                        "type": "string",
+                                        "example": "soccer football"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Partido actualizado y predicciones calificadas"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Partidos"
+                ],
+                "summary": "Eliminar un partido de la base de datos (Solo Administradores)",
+                "operationId": "bf0a5a3179688f7ebb8378fb4b9bab13",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Partido purgado con éxito"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/teams": {
+            "get": {
+                "tags": [
+                    "Equipos"
+                ],
+                "summary": "Listar todos los equipos registrados",
+                "operationId": "5c062691da678ca03bf60f3b320c09d3",
+                "responses": {
+                    "200": {
+                        "description": "Listado devuelto exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Equipos"
+                ],
+                "summary": "Registrar un nuevo equipo (Solo Administradores)",
+                "operationId": "a693054871fafa0be6550efe0bb12b9d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "country",
+                                    "founded_at",
+                                    "type",
+                                    "sport"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Real Madrid"
+                                    },
+                                    "logo": {
+                                        "type": "string",
+                                        "example": "logos/rm.png",
+                                        "nullable": true
+                                    },
+                                    "country": {
+                                        "type": "string",
+                                        "example": "España"
+                                    },
+                                    "founded_at": {
+                                        "type": "integer",
+                                        "example": 1902
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "example": "club",
+                                        "enum": [
+                                            "national_team",
+                                            "club"
+                                        ]
+                                    },
+                                    "sport": {
+                                        "type": "string",
+                                        "example": "soccer football"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Equipo guardado con éxito"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/teams/{id}": {
+            "put": {
+                "tags": [
+                    "Equipos"
+                ],
+                "summary": "Actualizar metadatos de un equipo (Solo Administradores)",
+                "operationId": "37a7ce7e3892a98c0429b9454d48f29d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "country",
+                                    "founded_at",
+                                    "type",
+                                    "sport"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "FC Barcelona"
+                                    },
+                                    "country": {
+                                        "type": "string",
+                                        "example": "España"
+                                    },
+                                    "founded_at": {
+                                        "type": "integer",
+                                        "example": 1899
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "example": "club",
+                                        "enum": [
+                                            "national_team",
+                                            "club"
+                                        ]
+                                    },
+                                    "sport": {
+                                        "type": "string",
+                                        "example": "soccer football"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Equipo mutado con éxito"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Equipos"
+                ],
+                "summary": "Remover un equipo de la persistencia (Solo Administradores)",
+                "operationId": "2d66f37d298cfd535e893dfd2f4197f1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Equipo removido exitosamente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Pega tu Bearer Token obtenido en el Login para interactuar con las rutas",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Autenticación",
+            "description": "Autenticación"
+        },
+        {
+            "name": "Competiciones",
+            "description": "Competiciones"
+        },
+        {
+            "name": "Predicciones",
+            "description": "Predicciones"
+        },
+        {
+            "name": "Ranking",
+            "description": "Ranking"
+        },
+        {
+            "name": "Partidos",
+            "description": "Partidos"
+        },
+        {
+            "name": "Equipos",
+            "description": "Equipos"
+        }
+    ]
+}
