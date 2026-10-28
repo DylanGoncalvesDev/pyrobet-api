@@ -10,7 +10,7 @@ use App\Http\Controllers\SportMatchController;
 use App\Http\Controllers\TeamsController;
 
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::get('/matches', [SportMatchController::class, 'index']);
 
 Route::middleware('auth:api')->group(function () {
