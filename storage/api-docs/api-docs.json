@@ -14,6 +14,82 @@
                 }
             ]
         },
+        "/api/admin/statistics": {
+            "get": {
+                "tags": [
+                    "Administración"
+                ],
+                "summary": "Obtener estadísticas del panel de administración",
+                "description": "Devuelve métricas generales y el número de predicciones por partido.",
+                "operationId": "0f938f5ce831de5285fd793e41334688",
+                "responses": {
+                    "200": {
+                        "description": "Estadísticas obtenidas correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "metrics": {
+                                            "properties": {
+                                                "total_predictions": {
+                                                    "type": "integer",
+                                                    "example": 250
+                                                },
+                                                "total_users": {
+                                                    "type": "integer",
+                                                    "example": 35
+                                                },
+                                                "total_matches": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "total_teams": {
+                                                    "type": "integer",
+                                                    "example": 32
+                                                },
+                                                "total_competitions": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "match_statistics": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "match_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "predictions_count": {
+                                                        "type": "integer",
+                                                        "example": 18
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Usuario no autenticado"
+                    },
+                    "403": {
+                        "description": "Acceso exclusivo para administradores"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/register": {
             "post": {
                 "tags": [
@@ -51,6 +127,11 @@
                                         "type": "string",
                                         "format": "password",
                                         "example": "password123"
+                                    },
+                                    "secret_code": {
+                                        "type": "string",
+                                        "example": "PB-X97-MSTR-84K2-102026",
+                                        "nullable": true
                                     }
                                 },
                                 "type": "object"
@@ -723,7 +804,7 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
                                     "name",
@@ -739,7 +820,7 @@
                                     },
                                     "logo": {
                                         "type": "string",
-                                        "example": "logos/rm.png",
+                                        "format": "binary",
                                         "nullable": true
                                     },
                                     "country": {
@@ -754,7 +835,7 @@
                                         "type": "string",
                                         "example": "club",
                                         "enum": [
-                                            "national_team",
+                                            "national",
                                             "club"
                                         ]
                                     },
@@ -781,12 +862,12 @@
             }
         },
         "/api/teams/{id}": {
-            "put": {
+            "post": {
                 "tags": [
                     "Equipos"
                 ],
-                "summary": "Actualizar metadatos de un equipo (Solo Administradores)",
-                "operationId": "37a7ce7e3892a98c0429b9454d48f29d",
+                "summary": "Actualizar un equipo (POST con _method=PUT)",
+                "operationId": "38487a9da9d6dd371fde6e35fe0f4a27",
                 "parameters": [
                     {
                         "name": "id",
@@ -800,9 +881,10 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
+                                    "_method",
                                     "name",
                                     "country",
                                     "founded_at",
@@ -810,9 +892,21 @@
                                     "sport"
                                 ],
                                 "properties": {
+                                    "_method": {
+                                        "type": "string",
+                                        "example": "PUT",
+                                        "enum": [
+                                            "PUT"
+                                        ]
+                                    },
                                     "name": {
                                         "type": "string",
                                         "example": "FC Barcelona"
+                                    },
+                                    "logo": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
                                     },
                                     "country": {
                                         "type": "string",
@@ -826,7 +920,7 @@
                                         "type": "string",
                                         "example": "club",
                                         "enum": [
-                                            "national_team",
+                                            "national",
                                             "club"
                                         ]
                                     },
@@ -891,6 +985,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Administración",
+            "description": "Administración"
+        },
         {
             "name": "Autenticación",
             "description": "Autenticación"
