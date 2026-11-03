@@ -555,11 +555,12 @@
                 "tags": [
                     "Ranking"
                 ],
-                "summary": "Consultar la tabla de posiciones global de PyroBet",
+                "summary": "Consultar la clasificación global de PyroBet",
+                "description": "Returns all regular users ordered by total points in descending order. Users without predictions are included with zero points. Administrator accounts are excluded.",
                 "operationId": "50a7b1244dcfcb2755237827af25f6a7",
                 "responses": {
                     "200": {
-                        "description": "Ranking calculado de mayor a menor con éxito"
+                        "description": "Global ranking retrieved successfully."
                     }
                 },
                 "security": [
