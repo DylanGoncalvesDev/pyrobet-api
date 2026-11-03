@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Prediction;
+use App\Models\SportMatch;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
@@ -40,6 +41,45 @@ class PredictionsController extends Controller
         $validatedData['user_id'] = $request->user()->id;
         $validatedData['status'] = 'pending';
         $validatedData['points'] = 0;
+
+        $predict = $validatedData['prediction'];
+        $homeScore = (int)$validatedData['home_score_prediction'];
+        $awayScore = (int)$validatedData['away_score_prediction'];
+
+        if ($predict === 'home' && $homeScore <= $awayScore) {
+            return response()->json([
+               'message' => 'Contradictory values: If prediction is [home], home score must be greater than away score.'
+            ], 422);
+        }
+
+        if ($predict === 'away' && $awayScore <= $homeScore) {
+            return response()->json([
+                'message' => 'Contradictory values: If prediction is [away], away score must be greater than home score.'
+            ], 422);
+        }
+
+        if ($predict === 'draw' && $homeScore !== $awayScore) {
+            return response()->json([
+                  'message' => 'Contradictory values: If prediction is [draw], both scores must be exactly equal.'
+            ], 422);
+        }
+
+        $existingPrediction = Prediction::where('user_id', $request->user()->id)
+            ->where('match_id', $validatedData['match_id'])
+            ->first();
+
+        if ($existingPrediction) {
+            return response()->json([
+                'message' => 'You have already submitted a prediction for this match. Please update your existing prediction instead.'
+            ], 403);
+        }
+
+        $match = SportMatch::findOrFail($validatedData['match_id']);
+        if ($match->status !== 'upcoming') {
+            return response()->json([
+                'message' => 'Predictions are closed. This match is already live or finished.'
+            ], 403);
+        }
 
         $prediction = Prediction::create($validatedData);
 
@@ -95,6 +135,28 @@ class PredictionsController extends Controller
             'away_score_prediction' => 'required|integer|min:0',
         ]);
 
+        $predict = $validatedData['prediction'];
+        $homeScore = (int)$validatedData['home_score_prediction'];
+        $awayScore = (int)$validatedData['away_score_prediction'];
+
+        if ($predict === 'home' && $homeScore <= $awayScore) {
+            return response()->json([
+               'message' => 'Contradictory values: If prediction is [home], home score must be greater than away score.'
+            ], 422);
+        }
+
+        if ($predict === 'away' && $awayScore <= $homeScore) {
+            return response()->json([
+                'message' => 'Contradictory values: If prediction is [away], away score must be greater than home score.'
+            ], 422);
+        }
+
+        if ($predict === 'draw' && $homeScore !== $awayScore) {
+            return response()->json([
+                  'message' => 'Contradictory values: If prediction is [draw], both scores must be exactly equal.'
+            ], 422);
+        }
+
         $prediction->update($validatedData);
 
         return response()->json([
@@ -111,9 +173,9 @@ class PredictionsController extends Controller
         parameters: [new OA\Parameter(name: "id", in: "path", required: true, schema: new OA\Schema(type: "string"))]
     )]
     #[OA\Response(response: 200, description: "Registro eliminado")]
-    public function destroy(string $id): JsonResponse
+    public function destroy(Request $request, string $id): JsonResponse
     {
-        $prediction = Prediction::findOrFail($id);
+        $prediction = Prediction::where('user_id', $request->user()->id)->findOrFail($id);
 
         $prediction->delete();
 

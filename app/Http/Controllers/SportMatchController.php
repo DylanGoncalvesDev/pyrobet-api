@@ -177,6 +177,12 @@ class SportMatchController extends Controller
     {
         $match = SportMatch::findOrFail($id);
 
+        if ($match->predictions()->count() > 0) {
+            return response()->json([
+                   'message' => 'Cannot delete this match. There are already active user predictions registered for it.'
+            ], 403);
+        }
+
         $match->delete();
 
         return response()->json([

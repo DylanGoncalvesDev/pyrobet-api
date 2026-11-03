@@ -8,6 +8,7 @@ use App\Http\Controllers\PredictionsController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\SportMatchController;
 use App\Http\Controllers\TeamsController;
+use App\Http\Controllers\AdminController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login');
@@ -37,4 +38,5 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
    Route::post('/matches', [SportMatchController::class, 'store']);
    Route::put('/matches/{id}', [SportMatchController::class, 'update']);
    Route::delete('/matches/{id}', [SportMatchController::class, 'destroy']);
+   Route::get('/admin/statistics', [AdminController::class, 'statistics']);
 });
